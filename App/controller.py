@@ -25,8 +25,10 @@
  """
 
 import config as cf
-from App import model
 import csv
+import datetime
+import os
+from App import model as mod
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -36,9 +38,21 @@ del modelo en una sola respuesta.  Esta responsabilidad
 recae sobre el controlador.
 """
 
+
+
+
 # ___________________________________________________
 #  Inicializacion del catalogo
 # ___________________________________________________
+
+
+def init():
+    """
+    Llama la funcion de inicializacion  del modelo.
+    """
+    # analyzer es utilizado para interactuar con el modelo
+    analyzer = mod.newAnalyzer()
+    return analyzer
 
 
 # ___________________________________________________
@@ -46,6 +60,34 @@ recae sobre el controlador.
 #  de datos en los modelos
 # ___________________________________________________
 
+
+def loadTrips(citibike):
+    for filename in os.listdir(cf.data_dir):
+        if filename.endswith('.csv'):
+            print ('Cargando archivo: ' + filename)
+            loadFile(citibike,filename)
+            
+
+def loadFile(citibike, tripfile):
+    tripfile= cf.data_dir + tripfile
+    input_file = csv.DictReader(open(tripfile,encoding="utf-8"),
+                                delimiter=",")
+    for trip in input_file:
+        mod.addTrip(citibike,trip)
+        return citibike
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+
+def topStations(analyzer):
+
+    return mod.topStations(analyzer)
+
+def routeRecomendations(analyzer,ageRange):
+
+    return mod.routeRecomendations(analyzer,ageRange)
+
+
+def touristRoute(analyzer,lat1,lon1,lat2,lon2):
+    return mod.touristRoute(analyzer,lat1,lon1,lat2,lon2)
